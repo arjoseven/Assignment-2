@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Population</title>
+    <style>
+        table, th, td {
+            border: 2px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <table id="populationTable">
+        <thead>
+            <tr>
+                <th colspan="2">U.S. Population</th>
+            </tr>
+        </thead>
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Population</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchAndDisplayData() {
+            const apiUrl = 'https://datausa.io/api/data?drilldowns=Nation&measures=Population';
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                const populationData = data.data;
+
+                populationData.sort((a, b) => a.Year.localeCompare(b.Year));
+
+                const tableBody = document.getElementById('populationTable').getElementsByTagName('tbody')[0];
+
+                populationData.forEach(row => {
+                    let tr = document.createElement('tr');
+                    let formattedPopulation = parseInt(row.Population).toLocaleString();
+                    tr.innerHTML = `<td>${row.Year}</td><td>${formattedPopulation}</td>`;
+                    tableBody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Fetching population data failed:', error);
+            }
+        }
+
+        window.onload = fetchAndDisplayData;
+    </script>
+</body>
+</html>
